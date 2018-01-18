@@ -469,6 +469,21 @@ _EOF_
         outputn "Creating storage pool"
     fi
 
+    # Check if storage pool exists and set STORPOOL_EXISTS variable.
+    storpool_exists "${VMNAME}"
+
+    if [ "${STORPOOL_EXISTS}" -eq 1 ]; then
+        echo -n "[WARNING] storage pool: ${VMNAME} already exists.  "
+        read -p "Do you want to overwrite storage pool: ${VMNAME} [y/N]? " -r
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            outputn "Destroying storage pool: ${VMNAME}"
+            virsh pool-destroy ${VMNAME} > /dev/null 2>&1 && ok
+        else
+            echo -e "\nNot overwriting storage pool ${VMNAME}. Exiting..."
+            exit 1
+        fi
+    fi
+
     # Create new storage pool for new VM
     (virsh pool-create-as \
         --name ${VMNAME} \
@@ -594,7 +609,7 @@ function set_defaults ()
     DNSDOMAIN=kiv.local         # DNS domain
     RESIZE_DISK=false               # Resize disk (boolean)
     IMAGEDIR=${HOME}/.kiv/images    # Directory to store images
-    BRIDGE=kvm0                   # Hypervisor bridge
+    BRIDGE=virbr0                   # Hypervisor bridge
     PUBKEY=${HOME}/.ssh/id_rsa.pub  # SSH public key
     DISTRO=centos7                  # Distribution
     MACADDRESS=""                   # MAC Address
