@@ -222,7 +222,7 @@ function fetch_images ()
         centos7)
             QCOW=CentOS-7-x86_64-GenericCloud.qcow2
             OS_VARIANT="centos7.0"
-            IMAGE_URL=https://cloud.centos.org/centos/7/images
+            IMAGE_URL=http://mirrors.ustc.edu.cn/centos-cloud/centos/7/images/
             LOGIN_USER=centos
             ;;
         centos7-atomic)
@@ -591,10 +591,10 @@ function set_defaults ()
     FEATURE=host                    # Use host cpu features to the guest
     MEMORY=1024                     # Amount of RAM in MB
     DISK_SIZE=""                    # Disk Size in GB
-    DNSDOMAIN=example.local         # DNS domain
+    DNSDOMAIN=kiv.local         # DNS domain
     RESIZE_DISK=false               # Resize disk (boolean)
-    IMAGEDIR=${HOME}/virt/images    # Directory to store images
-    BRIDGE=virbr0                   # Hypervisor bridge
+    IMAGEDIR=${HOME}/.kiv/images    # Directory to store images
+    BRIDGE=kvm0                   # Hypervisor bridge
     PUBKEY=${HOME}/.ssh/id_rsa.pub  # SSH public key
     DISTRO=centos7                  # Distribution
     MACADDRESS=""                   # MAC Address
