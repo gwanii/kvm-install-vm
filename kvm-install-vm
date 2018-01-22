@@ -71,6 +71,7 @@ function usage_subcommand ()
             printf "    fedora27        Fedora 27                           fedora\n"
             printf "    fedora27-atomic Fedora 27 Atomic Host               fedora\n"
             printf "    ubuntu1604      Ubuntu 16.04 LTS (Xenial Xerus)     ubuntu\n"
+            printf "    ubuntu1704      Ubuntu 17.04 LTS (Zesty Zapus)      ubuntu\n"
             printf "\n"
             printf "EXAMPLES\n"
             printf "    $prog create foo\n"
@@ -146,6 +147,7 @@ bold() { echo -e "\e[1m$@\e[0m" ; }
 red() { echo -e "\e[31m$@\e[0m" ; }
 green() { echo -e "\e[32m$@\e[0m" ; }
 yellow() { echo -e "\e[33m$@\e[0m" ; }
+blue() { echo -e "\e[34m$@\e[0m" ; }
 
 die() { red "ERR: $@" >&2 ; exit 2 ; }
 silent() { "$@" > /dev/null 2>&1 ; }
@@ -275,9 +277,15 @@ function fetch_images ()
             LOGIN_USER=fedora
             ;;
         ubuntu1604)
-            QCOW=ubuntu-16.04-server-cloudimg-amd64-disk1.img
+            QCOW=xenial-server-cloudimg-amd64-disk1.img
             OS_VARIANT="ubuntu16.04"
-            IMAGE_URL=https://cloud-images.ubuntu.com/releases/16.04/release
+            IMAGE_URL=http://mirrors.ustc.edu.cn/ubuntu-cloud-images/xenial/current
+            LOGIN_USER=ubuntu
+            ;;
+        ubuntu1704)
+            QCOW=zesty-server-cloudimg-amd64.img 
+            OS_VARIANT="auto"
+            IMAGE_URL=http://mirrors.ustc.edu.cn/ubuntu-cloud-images/zesty/current
             LOGIN_USER=ubuntu
             ;;
         *)
@@ -460,11 +468,8 @@ _EOF_
 
     if [ "${VERBOSE}" -eq 1 ]
     then
-        output "Creating storage pool with the following command"
-        printf "    virsh pool-create-as \\ \n"
-        printf "      --name ${VMNAME} \\ \n"
-        printf "      --type dir \\ \n"
-        printf "      --target ${IMAGEDIR}/${VMNAME} \n"
+        output "Creating storage pool with the following command:"
+        blue "    virsh pool-create-as --name ${VMNAME} --type dir --target ${IMAGEDIR}/${VMNAME}\n"
     else
         outputn "Creating storage pool"
     fi
@@ -501,20 +506,8 @@ _EOF_
 
     if [ "${VERBOSE}" -eq 1 ]
     then
-        output "Installing the domain with the following command"
-        printf "    virt-install \\ \n"
-        printf "      --import \\ \n"
-        printf "      --name ${VMNAME} \\ \n"
-        printf "      --memory ${MEMORY} \\ \n"
-        printf "      --vcpus ${CPUS} \\ \n"
-        printf "      --cpu ${FEATURE} \\ \n"
-        printf "      --disk ${DISK},format=qcow2,bus=virtio \\ \n"
-        printf "      --disk ${CI_ISO},device=cdrom \\ \n"
-        printf "      --network ${NETWORK_PARAMS} \\ \n"
-        printf "      --os-type=linux \\ \n"
-        printf "      --os-variant=${OS_VARIANT} \\ \n"
-        printf "      --graphics spice \\ \n"
-        printf "      --noautoconsole  \n"
+        output "Installing the domain with the following command:"
+        blue "    cd $(pwd) && virt-install --import --name ${VMNAME} --memory ${MEMORY} --vcpus ${CPUS} --cpu ${FEATURE} --disk ${DISK},format=qcow2,bus=virtio --disk ${CI_ISO},device=cdrom --network ${NETWORK_PARAMS} --os-type=linux --os-variant=${OS_VARIANT} --graphics spice --noautoconsole\n"
     else
         outputn "Installing the domain"
     fi
