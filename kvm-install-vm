@@ -26,6 +26,7 @@ COMMANDS
     detach-disk - detach a disk device from a guest domain
     list        - list all domains, running and stopped
     remove      - delete a guest domain
+    get-ssh-ip  - get ssh ip address
 
 EOF
 exit 0
@@ -126,6 +127,19 @@ function usage_subcommand ()
             printf "    $prog attach-disk -d 10 -s example-5g.qcow2 -t vdb foo\n"
             printf "        Attach a 10GB disk device named example-5g.qcow2 to the foo guest\n"
             printf "        domain.\n"
+            ;;
+        get-ssh-ip)
+            printf "NAME\n"
+            printf "    $prog get-ssh-ip [OPTIONS] [COMMANDS] VMNAME\n"
+            printf "\n"
+            printf "DESCRIPTION\n"
+            printf "    Get ssh IP of instance.\n"
+            printf "\n"
+            printf "COMMANDS\n"
+            printf "    help - show this help\n"
+            printf "\n"
+            printf "EXAMPLE\n"
+            printf "    $prog get-ssh-ip foo\n"
             ;;
         list)
             printf "NAME\n"
@@ -767,6 +781,11 @@ function attach-disk ()
 
 }
 
+function get-ssh-ip() {
+    VMNAME=$1
+    arp -n|grep $BRIDGE|grep $(virsh domiflist $VMNAME| sed -n 3p|awk '{print $5}')|awk '{print $1}'
+}
+
 #--------------------------------------------------
 # Main
 #--------------------------------------------------
@@ -781,7 +800,7 @@ case "${subcommand}" in
     help)
         if [[ "${1:-none}" == "none" ]]; then
             usage
-        elif [[ "$1" =~ ^create$|^remove$|^list$|^attach-disk$ ]]; then
+        elif [[ "$1" =~ ^create$|^remove$|^list$|^attach-disk$|^get-ssh-ip$ ]]; then
             usage_subcommand "$1"
         else
             printf "'$1' is not a valid subcommand.\n\n"
@@ -792,7 +811,7 @@ case "${subcommand}" in
         virsh list --all
         exit 0
         ;;
-    create|remove|attach-disk|remove-disk)
+    create|remove|attach-disk|remove-disk|get-ssh-ip)
         if [[ "${1:-none}" == "none" ]]; then
             usage_subcommand "${subcommand}"
         elif [[ "$1" =~ ^help$ ]]; then
