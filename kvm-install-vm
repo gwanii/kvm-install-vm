@@ -64,6 +64,7 @@ function usage_subcommand ()
             printf "    NAME            DESCRIPTION                         LOGIN\n"
             printf "    amazon2         Amazon Linux 2                      ec2-user\n"
             printf "    centos7         CentOS 7                            centos\n"
+            printf "    centos72        CentOS 7.2                          centos\n"
             printf "    centos7-atomic  CentOS 7 Atomic Host                centos\n"
             printf "    centos6         CentOS 6                            centos\n"
             printf "    debian9         Debian 9 (Stretch)                  debian\n"
@@ -241,6 +242,12 @@ function fetch_images ()
             IMAGE_URL=http://mirrors.ustc.edu.cn/centos-cloud/centos/7/images/
             LOGIN_USER=centos
             ;;
+        centos72)
+            QCOW=CentOS-7-x86_64-GenericCloud-1511.qcow2
+            OS_VARIANT="centos7.0"
+            IMAGE_URL=http://mirrors.ustc.edu.cn/centos-cloud/centos/7/images/
+            LOGIN_USER=centos
+            ;;
         centos7-atomic)
             QCOW=CentOS-Atomic-Host-7-GenericCloud.qcow2
             OS_VARIANT="centos7.0"
@@ -349,7 +356,7 @@ function storpool_exists ()
 function set_sudo_group ()
 {
     case "${DISTRO}" in
-        centos?|fedora??|*-atomic|amazon? )
+        centos??|fedora??|*-atomic|amazon? )
             SUDOGROUP="wheel"
             ;;
         ubuntu*|debian? )
@@ -364,7 +371,7 @@ function set_sudo_group ()
 function set_cloud_init_remove ()
 {
     case "${DISTRO}" in
-        centos?|amazon? )
+        centos??|amazon? )
             CLOUDINITRM="yum -y remove cloud-init"
             ;;
         fedora?? )
