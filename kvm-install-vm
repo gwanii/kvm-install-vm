@@ -293,7 +293,7 @@ function fetch_images ()
             ;;
         fedora27-atomic)
             QCOW=Fedora-Atomic-27-1.6.x86_64.qcow2
-            OS_VARIANT="fedora26"
+            OS_VARIANT="auto"
             IMAGE_URL=https://download.fedoraproject.org/pub/fedora/linux/releases/27/CloudImages/x86_64/images
             LOGIN_USER=fedora
             ;;
